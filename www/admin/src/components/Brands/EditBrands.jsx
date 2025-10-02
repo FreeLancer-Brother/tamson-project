@@ -1,0 +1,283 @@
+import { Form, Input, Row, Col, Button, message } from "antd";
+import { StyledTitle, SeoCommon } from "../common";
+import UploadImage from "../common/UploadImage";
+import UploadVideo from "../common/UploadVideo";
+import { useParams, useNavigate } from "react-router-dom";
+import {
+  stringToSlug,
+  mixContent,
+  getLinkToServer,
+  getValue,
+  convertImageToObject,
+} from "../../helpers/common";
+import { useCallback, useEffect, useState } from "react";
+import agent from "../../libs/agent";
+import api from "../../config/api";
+import _ from "lodash";
+import { CKEditor } from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import uploadPlugin from "../../libs/CKUpload";
+
+const EditBrands = ({ setLoadingOverlay }) => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [form] = Form.useForm();
+  const [logo, setLogo] = useState([]);
+  const [image, setImage] = useState([]);
+  const [headline, setHeadline] = useState([]);
+  const [video, setVideo] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [contentVi, setContentVi] = useState("");
+  const [contentEn, setContentEn] = useState("");
+  useEffect(() => {
+    async function getBrands() {
+      try {
+        setLoadingOverlay(true);
+        const response = await agent.get(`${api.brands}/${id}`);
+        const data = _.get(response, "data.data");
+        if (!data) {
+          message.error("Brand not found");
+          navigate("/manage/brands");
+          return;
+        }
+        const seoData = _.get(data, "seo", {});
+        form.setFieldsValue({
+          slug: _.get(data, "slug", ""),
+          link: _.get(data, "link", ""),
+          order: _.get(data, "order", 0),
+          brandName: _.get(data, "name", ""),
+          seoTitleEn: getValue(seoData, "title", "EN"),
+          seoTitleVi: getValue(seoData, "title", "VI"),
+          seoDescriptionVi: getValue(seoData, "description", "VI"),
+          seoDescriptionEn: getValue(seoData, "description", "EN"),
+          seoKeywordVi: getValue(seoData, "keyword", "VI"),
+          seoKeywordEn: getValue(seoData, "keyword", "EN"),
+        });
+        setContentVi(getValue(data, "content", "VI"));
+        setContentEn(getValue(data, "content", "EN"));
+        setLogo(_.compact([convertImageToObject(_.get(data, "logo"))]));
+        setImage(_.compact([convertImageToObject(_.get(data, "image"))]));
+        setHeadline(_.compact([convertImageToObject(_.get(data, "headline"))]));
+        setVideo(_.get(data, "video") ? api.base + _.get(data, "video") : "");
+        setLoadingOverlay(false);
+      } catch (error) {
+        setLoadingOverlay(false);
+        const getMessage = _.get(error, "response.data.message", error.message);
+        message.error(getMessage);
+      }
+    }
+    if (id) {
+      getBrands();
+    }
+  }, [id]);
+
+  const handleSubmit = () => {
+    form
+      .validateFields()
+      .then(async (values) => {
+        const { slug, brandName, link, order } = values;
+        if (!_.get(logo, "length", 0)) {
+          return message.error("Logo is missing");
+        }
+        if (!_.get(image, "length", 0)) {
+          return message.error("Image is missing");
+        }
+        try {
+          setLoading(true);
+
+          const postData = {
+            content: mixContent(contentVi, contentEn),
+            name: brandName,
+            slug,
+            image: getLinkToServer(_.first(image)),
+            logo: getLinkToServer(_.first(logo)),
+            headline: getLinkToServer(_.first(headline)),
+            video: getLinkToServer(video),
+            link,
+            order,
+            seo: {
+              title: mixContent(values.seoTitleVi, values.seoTitleEn),
+              description: mixContent(
+                values.seoDescriptionVi,
+                values.seoDescriptionEn
+              ),
+              keyword: mixContent(values.seoKeywordVi, values.seoKeywordEn),
+            },
+          };
+
+          if (id) {
+            const response = await agent.put(`${api.brands}/${id}`, {
+              ...postData,
+            });
+
+            if (_.get(response, "data.success")) {
+              message.success("Update brands successfully");
+            }
+          } else {
+            const response = await agent.post(api.brands, {
+              ...postData,
+            });
+            if (_.get(response, "data.success")) {
+              message.success("Create brands successfully");
+            }
+          }
+          navigate("/manage/brands");
+        } catch (error) {
+          const getMessage = _.get(
+            error,
+            "response.data.message",
+            error.message
+          );
+
+          message.error(getMessage);
+        }
+      })
+      .catch((err) => {})
+      .finally(() => setLoading(false));
+  };
+
+  const handleKeyUpName = useCallback(
+    _.debounce(() => {
+      const brandName = form.getFieldValue("brandName");
+      const slug = stringToSlug(brandName);
+      form.setFieldsValue({
+        slug,
+      });
+    }, 200),
+    []
+  );
+
+  return (
+    <div>
+      <div className="d-flex w-100 justify-content-between align-items-center">
+        <StyledTitle>{id ? "EDIT" : "CREATE"} BRANDS</StyledTitle>
+        <div>
+          <Button
+            style={{ marginRight: "1em" }}
+            type="primary"
+            onClick={() => navigate(-1)}
+          >
+            Back
+          </Button>
+          <Button loading={loading} type="primary" onClick={handleSubmit}>
+            Save
+          </Button>
+        </div>
+      </div>
+      <Form layout="vertical" form={form}>
+        <Row gutter={[16, 0]}>
+          <Col span="12">
+            <Form.Item
+              name="brandName"
+              label="Brand Name"
+              rules={[{ required: true }]}
+            >
+              <Input onKeyUp={handleKeyUpName} />
+            </Form.Item>
+          </Col>
+          <Col span="12">
+            <Form.Item name="slug" label="Slug" rules={[{ required: true }]}>
+              <Input />
+            </Form.Item>
+          </Col>
+
+          <Col span="12">
+            <Form.Item name="order" label="Order">
+              <Input />
+            </Form.Item>
+          </Col>
+          <Col span="12"></Col>
+
+          <Col span="12">
+            <Form.Item name="contentVi" label="Content (VN)" required>
+              <CKEditor
+                config={{
+                  extraPlugins: [uploadPlugin],
+                }}
+                editor={ClassicEditor}
+                data={contentVi}
+                onChange={(event, editor) => {
+                  const data = editor.getData();
+                  setContentVi(data);
+                }}
+              />
+            </Form.Item>
+          </Col>
+          <Col span="12">
+            <Form.Item name="contentEn" label="Content (EN)" required>
+              <CKEditor
+                config={{
+                  extraPlugins: [uploadPlugin],
+                }}
+                editor={ClassicEditor}
+                data={contentEn}
+                onChange={(event, editor) => {
+                  const data = editor.getData();
+                  setContentEn(data);
+                }}
+              />
+            </Form.Item>
+          </Col>
+
+          <Col span="12">
+            <Form.Item name="name" label="Logo">
+              <UploadImage
+                fileListData={logo}
+                onChange={setLogo}
+                maxImage={1}
+                width="200px"
+                height="200px"
+              />
+            </Form.Item>
+          </Col>
+          <Col span="12">
+            <Form.Item name="name" label="Main Image">
+              <UploadImage
+                fileListData={image}
+                onChange={setImage}
+                maxImage={1}
+                width="200px"
+                height="200px"
+              />
+            </Form.Item>
+          </Col>
+
+          <Col span="12">
+            <Form.Item name="headline" label="Headline (Using when the brand not have product)">
+              <UploadImage
+                fileListData={headline}
+                onChange={setHeadline}
+                maxImage={1}
+                width="200px"
+                height="200px"
+              />
+            </Form.Item>
+          </Col>
+
+          <Col span="12">
+            <Form.Item name="link" label="Url for headline">
+              <Input />
+            </Form.Item>
+          </Col>
+
+          <Col span="12">
+            <br />
+            <Form.Item name="video" label="Video (Using when the brand not have product)">
+              <UploadVideo
+                fileListData={video}
+                onChange={setVideo}
+                maxVideo={1}
+                height="200px"
+              />
+            </Form.Item>
+            <br />
+          </Col>
+
+          {SeoCommon()}
+        </Row>
+      </Form>
+    </div>
+  );
+};
+
+export default EditBrands;

@@ -1,0 +1,11 @@
+Huong dan su dung Source tren Docker
+
+1. Copy tamsonsource va tamsondb vao thu muc /home voi cau truc thu muc la:
++ /home/db
++ /home/proxy
++ /home/uploads
++ /home/www
+
+2. Chay docker compose up -d trong thu muc /home/www
+
+3. Refresh trang.

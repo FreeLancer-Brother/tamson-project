@@ -1,0 +1,7 @@
+node_modules
+package-lock.json
+dist
+Dockerfile
+public/uploads/images
+public/uploads/documents
+.env

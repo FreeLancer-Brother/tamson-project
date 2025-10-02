@@ -1,0 +1,43 @@
+.product-image {
+    max-width: 100%;
+    width: 68px;
+    height: 68px;
+    object-fit: contain;
+}
+
+.trans-divider-small {
+    margin-top: 30px
+}
+
+.trans-divider-large {
+    margin-top: 80px
+}
+
+.video {
+    -moz-transform: scale(1.5);
+    -webkit-transform: scale(1.5);
+    -o-transform: scale(1.5);
+    -ms-transform: scale(1.5);
+}
+
+@media screen and (max-width: 992px) {
+    .trans-divider-small {
+        margin-top: 40px !important
+    }
+
+    .trans-divider-large {
+        margin-top: 100px !important
+    }
+
+    .d-lg-none {
+        display: flex !important;
+    }
+}
+
+@media screen and (max-width: 560px) {
+    .video {
+        transform: scale(2.5);
+    }
+
+
+}
