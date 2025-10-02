@@ -73,7 +73,7 @@ const User = ({ setLoadingOverlay }) => {
 
   const handleKeyUpName = useCallback(
     _.debounce(() => {
-      const name = form.getFieldValue("titleEn");
+      const name = form.getFieldValue("titleVn");
       const slug = stringToSlug(name);
       form.setFieldsValue({
         slug,
@@ -157,7 +157,7 @@ const User = ({ setLoadingOverlay }) => {
           message.error(getMessage);
         }
       })
-      .catch((err) => {})
+      .catch((err) => { })
       .finally(() => setLoading(false));
   };
 
@@ -182,12 +182,12 @@ const User = ({ setLoadingOverlay }) => {
         <Row gutter={[32, 0]}>
           <Col span="12">
             <Form.Item label="Title (VI)" name="titleVn" required>
-              <Input placeholder="Input title" />
+              <Input placeholder="Input title" onKeyUp={handleKeyUpName} />
             </Form.Item>
           </Col>
           <Col span="12">
             <Form.Item label="Title (EN)" name="titleEn" required>
-              <Input placeholder="Input title" onKeyUp={handleKeyUpName} />
+              <Input placeholder="Input title" />
             </Form.Item>
           </Col>
 
