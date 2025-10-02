@@ -1,6 +1,4 @@
-import { Form, Input, Button, Col, Row, Space, Switch, message } from "antd";
-import styled from "styled-components";
-import { BACKEND_ENDPOINT } from "../../config/constants";
+import { Form, Input, Button, Col, Row, message, Modal } from "antd";
 import { useParams, useNavigate } from "react-router-dom";
 import agent from "../../libs/agent";
 import api from "../../config/api";
@@ -12,7 +10,6 @@ import UploadImage from "../common/UploadImage";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import {
-  getFullLinkImage,
   getLinkToServer,
   convertImageToObject,
   getValue,
@@ -30,6 +27,7 @@ const User = ({ setLoadingOverlay }) => {
   const [contentEn, setContentEn] = useState("");
   const [image, setImage] = useState([]);
   const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     async function getNews() {
       try {
@@ -43,8 +41,10 @@ const User = ({ setLoadingOverlay }) => {
           return;
         }
         const seoData = _.get(data, "seo", {});
+        const vietnameseTitle = getValue(data, "title", "VI");
+        
         form.setFieldsValue({
-          titleVn: getValue(data, "title", "VI"),
+          titleVn: vietnameseTitle,
           titleEn: getValue(data, "title", "EN"),
           seoTitleEn: getValue(seoData, "title", "EN"),
           seoTitleVi: getValue(seoData, "title", "VI"),
@@ -52,8 +52,9 @@ const User = ({ setLoadingOverlay }) => {
           seoDescriptionEn: getValue(seoData, "description", "EN"),
           seoKeywordVi: getValue(seoData, "keyword", "VI"),
           seoKeywordEn: getValue(seoData, "keyword", "EN"),
-          slug: _.get(data, "slug"),
+          slug: _.get(data, 'slug') || stringToSlug(vietnameseTitle), // Ưu tiên slug đã có, nếu không thì tạo mới
         });
+
         setContentVi(getValue(data, "content", "VI") || "");
         setContentEn(getValue(data, "content", "EN") || "");
         setImage(_.compact([convertImageToObject(_.get(data, "image"))]));
@@ -69,18 +70,21 @@ const User = ({ setLoadingOverlay }) => {
     if (id) {
       getNews();
     }
-  }, [id]);
+  }, [id, form, navigate, setLoadingOverlay]);
 
-  const handleKeyUpName = useCallback(
-    _.debounce(() => {
-      const name = form.getFieldValue("titleVn");
-      const slug = stringToSlug(name);
-      form.setFieldsValue({
-        slug,
-      });
-    }, 200),
-    []
+  // Sử dụng debounce của lodash để tránh gọi hàm liên tục khi gõ nhanh
+  const debouncedSlugGeneration = useCallback(
+    _.debounce((value) => {
+      const slug = stringToSlug(value);
+      form.setFieldsValue({ slug });
+    }, 300), // Đợi 300ms sau khi người dùng ngừng gõ
+    [form]
   );
+
+  const handleTitleVnChange = (e) => {
+    debouncedSlugGeneration(e.target.value);
+  };
+
 
   const handleSubmit = () => {
     if (!image.length) {
@@ -132,19 +136,11 @@ const User = ({ setLoadingOverlay }) => {
         try {
           setLoading(true);
           if (id) {
-            const response = await agent.put(`${api.news}/${id}`, {
-              ...postData,
-            });
-            if (_.get(response, "data.success")) {
-              message.success("Update news successfully");
-            }
+            await agent.put(`${api.news}/${id}`, { ...postData });
+            message.success("Update news successfully");
           } else {
-            const response = await agent.post(api.news, {
-              ...postData,
-            });
-            if (_.get(response, "data.success")) {
-              message.success("Create news successfully");
-            }
+            await agent.post(api.news, { ...postData });
+            message.success("Create news successfully");
           }
           navigate("/manage/news");
         } catch (error) {
@@ -153,12 +149,14 @@ const User = ({ setLoadingOverlay }) => {
             "response.data.message",
             error.message
           );
-
           message.error(getMessage);
+        } finally {
+            setLoading(false);
         }
       })
-      .catch((err) => { })
-      .finally(() => setLoading(false));
+      .catch((err) => {
+          console.log("Validation Failed:", err);
+      });
   };
 
   return (
@@ -182,7 +180,7 @@ const User = ({ setLoadingOverlay }) => {
         <Row gutter={[32, 0]}>
           <Col span="12">
             <Form.Item label="Title (VI)" name="titleVn" required>
-              <Input placeholder="Input title" onKeyUp={handleKeyUpName} />
+              <Input placeholder="Input title" onChange={handleTitleVnChange} />
             </Form.Item>
           </Col>
           <Col span="12">
