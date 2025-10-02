@@ -17,7 +17,7 @@
           <a-col :xs="{ span: 24 }" :lg="{ span: 12 }" class="content item d-flex align-items-center">
             <div class="caption">
               <h2 class="tend mb-1">
-                {{ product.name[currentLocale] }}
+                {{ index + 1 }}. {{ product.name[currentLocale] }}
               </h2>
               <div class="product-info">
                 <ul class="product-spec">
