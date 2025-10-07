@@ -49,8 +49,7 @@ export default {
     const links = [
       { rel: "manifest", href: "/site.webmanifest"},
       { rel: "mask-icon", href: "/safari-pinned-tab.svg",color:"#5bbad5"},
-      { rel: "icon", type: "image/png", href: "/favicon-16x16.png", size:"16x16" },
-      { rel: "icon", type: "image/png", href: "/favicon-32x32.png", size:"32x32" },
+      { rel: "icon", type: "image/svg+xml", href: "/favicon.svg?v=1" },
       { rel: "apple-touch-icon", href: "/apple-touch-icon.png", sizes:"180x180" }
     ];
 
