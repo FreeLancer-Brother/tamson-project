@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Document } from "mongoose";
 import * as mongoose from "mongoose";
-import { MultiLanguageSchema } from "src/utils/objects.constant";
+import { MultiLanguageSchema, SEOSchema } from "src/utils/objects.constant";
 import { YatchTypes } from "src/yatch-types/schemas/yatch-types.schema";
 
 export type ProductLinesDocument = ProductLines & Document;
@@ -24,6 +24,9 @@ export class ProductLines {
 
   @Prop({ required: false, default: 0 })
   order: number;
+
+  @Prop({ required: true })
+  seo: SEOSchema
 }
 
 export const ProductLinesSchema = SchemaFactory.createForClass(ProductLines);
