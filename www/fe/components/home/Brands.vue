@@ -19,9 +19,7 @@
             reset: false
           }"
           :xs="{ span: 24 }"
-          :lg="{
-            span: index + 1 === brands.length && index % 2 === 0 ? 24 : 12,
-          }"
+          :lg="{ span: 12 }"
         >
           <nuxt-link
             class="w-100 trans-home-brands-image"
@@ -77,7 +75,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+.trans-home-brands-background {
+  height: 500px;
+}
+
 @media screen and (max-width: 992px) {
+  .trans-home-brands-background {
+    height: 250px;
+  }
   .trans-home-brands-logo {
     font-size: 14px !important;
     line-height: 20px !important;
@@ -195,4 +201,3 @@ export default {
   width: 75%;
 }
 </style>
->
