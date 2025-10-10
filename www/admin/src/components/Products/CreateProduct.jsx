@@ -212,8 +212,8 @@ const CreateProduct = ({ setLoadingOverlay }) => {
           });
 
           const processGallery = _.map(galleries, (link) =>
-              getLinkToServer(link)
-            );
+            getLinkToServer(link)
+          );
 
           const postData = {
             content: mixContent(contentVi, contentEn),
@@ -265,7 +265,7 @@ const CreateProduct = ({ setLoadingOverlay }) => {
           message.error(getMessage);
         }
       })
-      .catch((err) => {})
+      .catch((err) => { })
       .finally(() => setLoading(false));
   };
 
@@ -524,8 +524,8 @@ const CreateProduct = ({ setLoadingOverlay }) => {
 
   const handleKeyUpName = useCallback(
     _.debounce(() => {
-      const name = form.getFieldValue("nameEn");
-      const slug = stringToSlug(name);
+      const name = form.getFieldValue("nameVi");
+      const slug = stringToSlug(name)
       form.setFieldsValue({
         slug,
       });
@@ -558,7 +558,7 @@ const CreateProduct = ({ setLoadingOverlay }) => {
               label="Name (VI)"
               rules={[{ required: true, message: "Name is required" }]}
             >
-              <Input />
+              <Input onKeyUp={handleKeyUpName} />
             </Form.Item>
           </Col>
 
@@ -568,7 +568,7 @@ const CreateProduct = ({ setLoadingOverlay }) => {
               label="Name (EN)"
               rules={[{ required: true, message: "Name is required" }]}
             >
-              <Input onKeyUp={handleKeyUpName} />
+              <Input />
             </Form.Item>
           </Col>
 
