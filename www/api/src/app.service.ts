@@ -28,7 +28,7 @@ export class AppService {
     private productService: ProductsService,
     private serviceService: ServicesService,
     private configService: ConfigsService
-  ) {}
+  ) { }
 
   async onApplicationBootstrap() {
     // Seeding admin user
@@ -330,15 +330,13 @@ export class AppService {
                       content: [
                         {
                           language: "VI",
-                          content: `Nội dung The world reference in cruising. With eight models ranging from 31 to 60 feet, the Oceanis is a safe and efficient sailing yacht. With increasingly stable hulls, clear deck plans, simplified manoeuvring, equipment and interiors lending themselves to personalization, the Oceanis range continues to improve the cruising experience. The dream is subtly falling into place. ${
-                            key + 1
-                          }`,
+                          content: `Nội dung The world reference in cruising. With eight models ranging from 31 to 60 feet, the Oceanis is a safe and efficient sailing yacht. With increasingly stable hulls, clear deck plans, simplified manoeuvring, equipment and interiors lending themselves to personalization, the Oceanis range continues to improve the cruising experience. The dream is subtly falling into place. ${key + 1
+                            }`,
                         },
                         {
                           language: "EN",
-                          content: `The world reference in cruising. With eight models ranging from 31 to 60 feet, the Oceanis is a safe and efficient sailing yacht. With increasingly stable hulls, clear deck plans, simplified manoeuvring, equipment and interiors lending themselves to personalization, the Oceanis range continues to improve the cruising experience. The dream is subtly falling into place. ${
-                            key + 1
-                          }`,
+                          content: `The world reference in cruising. With eight models ranging from 31 to 60 feet, the Oceanis is a safe and efficient sailing yacht. With increasingly stable hulls, clear deck plans, simplified manoeuvring, equipment and interiors lending themselves to personalization, the Oceanis range continues to improve the cruising experience. The dream is subtly falling into place. ${key + 1
+                            }`,
                         },
                       ],
                       name: [
@@ -552,13 +550,11 @@ export class AppService {
                             },
                           ],
                           slug: slug(
-                            `${yatchType.slug} product line ${k + 1} product ${
-                              key + 1
+                            `${yatchType.slug} product line ${k + 1} product ${key + 1
                             }`
                           ),
-                          image: `images/defaults/products/image${
-                            (key % 8) + 1
-                          }.png`,
+                          image: `images/defaults/products/image${(key % 8) + 1
+                            }.png`,
                           bannerImage: `images/defaults/products/background-header.png`,
                           productLine: productLineCreated._id.toString(),
                           brochureLink: "https://google.com",
@@ -1462,6 +1458,119 @@ export class AppService {
                 ],
                 slug: "renting",
                 image: "images/defaults/services/renting-banner.png",
+                products: [
+                  {
+                    name: [
+                      {
+                        language: "VI",
+                        content: "Azimut 55 Fly",
+                      },
+                      {
+                        language: "EN",
+                        content: "Azimut 55 Fly",
+                      },
+                    ],
+                    length: "17.42 m",
+                    year: "2022",
+                    cabin: "3",
+                    area: "Saigon",
+                    price: "$3,500 per hour",
+                    show: 1,
+                    content: [
+                      {
+                        language: "VI",
+                        content:
+                          "Trinh bay thong tin co ban ve dich vu thue Azimut 55 Fly.",
+                      },
+                      {
+                        language: "EN",
+                        content:
+                          "Introducing the essentials of the Azimut 55 Fly charter experience.",
+                      },
+                    ],
+                    image1:
+                      "images/defaults/services/service-1.png",
+                    image2:
+                      "images/defaults/services/service-2.png",
+                    image3:
+                      "images/defaults/services/service-3.png",
+                    order: 1,
+                  },
+                  {
+                    name: [
+                      {
+                        language: "VI",
+                        content: "Lagoon Seventy 8",
+                      },
+                      {
+                        language: "EN",
+                        content: "Lagoon Seventy 8",
+                      },
+                    ],
+                    length: "23.80 m",
+                    year: "2021",
+                    cabin: "4",
+                    area: "Nha Trang",
+                    price: "$9,900 per day",
+                    show: 1,
+                    content: [
+                      {
+                        language: "VI",
+                        content:
+                          "Mo ta ngan gon dich vu thue Lagoon Seventy 8 cho du khach.",
+                      },
+                      {
+                        language: "EN",
+                        content:
+                          "Short overview of the Lagoon Seventy 8 charter offering.",
+                      },
+                    ],
+                    image1:
+                      "images/defaults/services/service-1.png",
+                    image2:
+                      "images/defaults/services/service-2.png",
+                    image3:
+                      "images/defaults/services/service-3.png",
+                    order: 2,
+                  },
+                  {
+                    name: [
+                      {
+                        language: "VI",
+                        content: "Princess 62",
+                      },
+                      {
+                        language: "EN",
+                        content: "Princess 62",
+                      },
+                    ],
+                    length: "19.30 m",
+                    year: "2020",
+                    cabin: "3",
+                    area: "Ha Long",
+                    price: "$6,800 per day",
+                    show: 1,
+                    content: [
+                      {
+                        language: "VI",
+                        content:
+                          "Noi bat cac tien ich cua thuyen Princess 62 danh cho tour rieng.",
+                      },
+                      {
+                        language: "EN",
+                        content:
+                          "Highlighting the amenities of the Princess 62 for private tours.",
+                      },
+                    ],
+                    image1:
+                      "images/defaults/services/service-1.png",
+                    image2:
+                      "images/defaults/services/service-2.png",
+                    image3:
+                      "images/defaults/services/service-3.png",
+                    order: 3,
+                  },
+                ],
                 type: 3,
               },
             ];

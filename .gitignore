@@ -1,1 +1,5 @@
 uploads
+db
+dbexport
+package-lock.json
+yarn.lock

@@ -1,31 +1,35 @@
-version: '3.7'
+version: "3.7"
 services:
   db:
     image: mongo:5
     container_name: db
     networks:
-        localnet:
-            ipv4_address: 172.20.0.2
+      localnet:
+        ipv4_address: 172.20.0.2
     restart: always
     volumes:
-      - /home/db:/data/db
-      - /home/dbexport:/export
+      - D:/work/freelance/tamson-project/db:/data/db
+      - D:/work/freelance/tamson-project/dbexport:/export
+    ports:
+      - "27017:27017"
 
   redis:
     networks:
-        localnet:
-            ipv4_address: 172.20.0.3
+      localnet:
+        ipv4_address: 172.20.0.3
     image: redis:7.0.12-alpine
     container_name: redis
     restart: always
+    ports:
+      - "6379:6379"
 
   api:
-    image: 'api:latest'
+    image: "api:latest"
     restart: unless-stopped
     container_name: api
     networks:
-        localnet:
-            ipv4_address: 172.20.0.4
+      localnet:
+        ipv4_address: 172.20.0.4
     environment:
       - PORT=8686
       - JWT_SECRET=a?S6zjgbZxm7Fv?rd#h?AEM*
@@ -34,7 +38,7 @@ services:
     build: api/.
     working_dir: /var/www/trans-api
     volumes:
-      - /home/uploads:/var/www/trans-api/public/uploads
+      - D:/work/freelance/tamson-project/uploads:/var/www/trans-api/public/uploads
     depends_on:
       - db
       - redis
@@ -43,11 +47,11 @@ services:
       - redis
 
   fe:
-    image: 'node:16-alpine'
+    image: "node:16-alpine"
     restart: unless-stopped
     networks:
-        localnet:
-            ipv4_address: 172.20.0.5
+      localnet:
+        ipv4_address: 172.20.0.5
     environment:
       - PORT=8687
       - API_ROOT=https://api.tamsonyachting.com
@@ -56,7 +60,7 @@ services:
       - NODE_TLS_REJECT_UNAUTHORIZED=0
     container_name: fe
     volumes:
-      - /home/www/fe:/node
+      - D:/work/freelance/tamson-project/www/fe:/node
     command: ["yarn", "start"]
     #command: sleep 10000
 
@@ -64,14 +68,14 @@ services:
     working_dir: /node
 
   admin:
-    image: 'node:14.19.1-alpine'
+    image: "node:14.19.1-alpine"
     restart: unless-stopped
     networks:
-        localnet:
-            ipv4_address: 172.20.0.6
+      localnet:
+        ipv4_address: 172.20.0.6
     container_name: admin
     volumes:
-      - /home/www/admin:/node
+      - D:/work/freelance/tamson-project/www/admin:/node
     command: ["yarn", "start"]
     #command: sleep 10000
 
@@ -83,19 +87,19 @@ services:
     working_dir: /node
 
   proxy:
-    image: 'jc21/nginx-proxy-manager:latest'
+    image: "jc21/nginx-proxy-manager:latest"
     networks:
-        localnet:
-            ipv4_address: 172.20.0.7
+      localnet:
+        ipv4_address: 172.20.0.7
     container_name: proxy
     restart: unless-stopped
     ports:
-      - '80:80'
-     # - '81:81'
-      - '443:443'
+      - "80:80"
+      # - '81:81'
+      - "443:443"
     volumes:
-      - /home/proxy/data:/data
-      - /home/proxy/letsencrypt:/etc/letsencrypt
+      - D:/work/freelance/tamson-project/proxy/data:/data
+      - D:/work/freelance/tamson-project/proxy/letsencrypt:/etc/letsencrypt
 networks:
   localnet:
     ipam:
@@ -103,5 +107,3 @@ networks:
         - subnet: 172.20.0.0/24
 volumes:
   apiUploads: {}
-
-
