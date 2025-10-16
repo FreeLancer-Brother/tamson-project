@@ -19,95 +19,95 @@ import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import uploadPlugin from "../../libs/CKUpload";
 
 function processCollection(collection) {
-  return _.map(collection, (item) => ({
-    image: getLinkToServer(_.first(item.image)),
-    title: mixContent(item.titleVi, item.titleEn),
-  }));
-}
+    return _.map(collection, (item) => ({
+      image: getLinkToServer(_.first(item.image)),
+      title: mixContent(item.titleVi, item.titleEn),
+    }));
+  }
+  
+  const CreateService = ({ setLoadingOverlay }) => {
+    const { id } = useParams();
+    const navigate = useNavigate();
+    const [form] = Form.useForm();
+    const [image, setImage] = useState([]);
+    const [headImage, setHeadImage] = useState([]);
+    const [backgroundImage, setBackgroundImage] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [type, setType] = useState(0);
+    const [services, setServices] = useState([]);
+    const [facilities, setFacilities] = useState([]);
+    const [galleries, setGalleries] = useState([]);
+    const [docks, setDocks] = useState([]);
+    const [contentVi, setContentVi] = useState("");
+    const [contentEn, setContentEn] = useState("");
+    const [type2ContentVi, setType2ContentVi] = useState("");
+    const [type2ContentEn, setType2ContentEn] = useState("");
 
-const CreateService = ({ setLoadingOverlay }) => {
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const [form] = Form.useForm();
-  const [image, setImage] = useState([]);
-  const [headImage, setHeadImage] = useState([]);
-  const [backgroundImage, setBackgroundImage] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [type, setType] = useState(0);
-  const [services, setServices] = useState([]);
-  const [facilities, setFacilities] = useState([]);
-  const [galleries, setGalleries] = useState([]);
-  const [docks, setDocks] = useState([]);
-  const [contentVi, setContentVi] = useState("");
-  const [contentEn, setContentEn] = useState("");
-  const [type2ContentVi, setType2ContentVi] = useState("");
-  const [type2ContentEn, setType2ContentEn] = useState("");
-
-  const [type3ContentVi, setType3ContentVi] = useState("");
-  const [type3ContentEn, setType3ContentEn] = useState("");
-  const [type3Content2Vi, setType3Content2Vi] = useState("");
-  const [type3Content2En, setType3Content2En] = useState("");
-  const [products, setProducts] = useState([]);
-
-  useEffect(() => {
-    async function getService() {
-      try {
-        setLoadingOverlay(true);
-        setLoading(true);
-        const response = await agent.get(`${api.services}/${id}`);
-        const data = _.get(response, "data.data");
-        if (!data) {
-          message.error("Service not found");
-          navigate("/manage/service");
-          return;
-        }
-        const seoData = _.get(data, "seo", {});
-        const getType = _.get(data, "type");
-        setType(_.get(data, "type"));
-
-        form.setFieldsValue({
-          nameVi: getValue(data, "name", "VI"),
-          nameEn: getValue(data, "name", "EN"),
-          slug: _.get(data, "slug"),
-          seoTitleEn: getValue(seoData, "title", "EN"),
-          seoTitleVi: getValue(seoData, "title", "VI"),
-          seoDescriptionVi: getValue(seoData, "description", "VI"),
-          seoDescriptionEn: getValue(seoData, "description", "EN"),
-          seoKeywordVi: getValue(seoData, "keyword", "VI"),
-          seoKeywordEn: getValue(seoData, "keyword", "EN"),
-        });
-
-        setContentVi(getValue(data, "content", "VI"));
-        setContentEn(getValue(data, "content", "EN"));
-
-        setType2ContentVi(getValue(data, "content", "VI"));
-        setType2ContentEn(getValue(data, "content", "EN"));
-
-        setType3ContentVi(getValue(data, "content", "VI"));
-        setType3ContentEn(getValue(data, "content", "EN"));
-
-        setType3Content2Vi(getValue(data, "content2", "VI"));
-        setType3Content2En(getValue(data, "content2", "EN"));
-
-        if (getType === 2) {
+    const [type3ContentVi, setType3ContentVi] = useState("");
+    const [type3ContentEn, setType3ContentEn] = useState("");
+    const [type3Content2Vi, setType3Content2Vi] = useState("");
+    const [type3Content2En, setType3Content2En] = useState("");
+    const [products, setProducts] = useState([]);
+  
+    useEffect(() => {
+      async function getService() {
+        try {
+          setLoadingOverlay(true);
+          setLoading(true);
+          const response = await agent.get(`${api.services}/${id}`);
+          const data = _.get(response, "data.data");
+          if (!data) {
+            message.error("Service not found");
+            navigate("/manage/service");
+            return;
+          }
+          const seoData = _.get(data, "seo", {});
+          const getType = _.get(data, "type");
+          setType(_.get(data, "type"));
+  
           form.setFieldsValue({
-            type2TitleVi: getValue(data, "title", "VI"),
-            type2TitleEn: getValue(data, "title", "EN"),
+            nameVi: getValue(data, "name", "VI"),
+            nameEn: getValue(data, "name", "EN"),
+            slug: _.get(data, "slug"),
+            seoTitleEn: getValue(seoData, "title", "EN"),
+            seoTitleVi: getValue(seoData, "title", "VI"),
+            seoDescriptionVi: getValue(seoData, "description", "VI"),
+            seoDescriptionEn: getValue(seoData, "description", "EN"),
+            seoKeywordVi: getValue(seoData, "keyword", "VI"),
+            seoKeywordEn: getValue(seoData, "keyword", "EN"),
           });
-        }
+  
+          setContentVi(getValue(data, "content", "VI"));
+          setContentEn(getValue(data, "content", "EN"));
 
-        if (getType === 3) {
-          form.setFieldsValue({
-            type3TitleVi: getValue(data, "title", "VI"),
-            type3TitleEn: getValue(data, "title", "EN"),
-          });
-        }
+          setType2ContentVi(getValue(data, "content", "VI"));
+          setType2ContentEn(getValue(data, "content", "EN"));
 
-        setImage(_.compact([convertImageToObject(_.get(data, "image"))]));
-        setBackgroundImage([
-          _.compact(convertImageToObject(_.get(data, "servicesBackground"))),
-        ]);
+          setType3ContentVi(getValue(data, "content", "VI"));
+          setType3ContentEn(getValue(data, "content", "EN"));
 
+          setType3Content2Vi(getValue(data, "content2", "VI"));
+          setType3Content2En(getValue(data, "content2", "EN"));
+  
+          if (getType === 2) {
+            form.setFieldsValue({
+              type2TitleVi: getValue(data, "title", "VI"),
+              type2TitleEn: getValue(data, "title", "EN"),
+            });
+          }
+  
+          if (getType === 3) {
+            form.setFieldsValue({
+              type3TitleVi: getValue(data, "title", "VI"),
+              type3TitleEn: getValue(data, "title", "EN"),
+            });
+          }
+  
+          setImage(_.compact([convertImageToObject(_.get(data, "image"))]));
+          setBackgroundImage([
+            _.compact(convertImageToObject(_.get(data, "servicesBackground"))),
+          ]);
+  
         const processServices = _.map(_.get(data, "services", []), (item) => {
           return {
             titleVi: getValue(item, "title", "VI"),
@@ -118,19 +118,19 @@ const CreateService = ({ setLoadingOverlay }) => {
             id: uuid(),
           };
         });
-
+  
         const processFacilities = _.map(
           _.get(data, "facilities", []),
           (item) => {
             return {
-              titleVi: getValue(item, "title", "VI"),
-              titleEn: getValue(item, "title", "EN"),
-              image: _.compact([convertImageToObject(_.get(item, "image"))]),
-              id: uuid(),
+            titleVi: getValue(item, "title", "VI"),
+            titleEn: getValue(item, "title", "EN"),
+            image: _.compact([convertImageToObject(_.get(item, "image"))]),
+            id: uuid(),
             };
           }
         );
-
+  
         const processDocks = _.map(_.get(data, "docks", []), (item) => {
           return {
             titleVi: getValue(item, "title", "VI"),
@@ -139,11 +139,11 @@ const CreateService = ({ setLoadingOverlay }) => {
             id: uuid(),
           };
         });
-
-        const processGallery = _.compact(
-          _.map(_.get(data, "galleries", []), (item) => convertImageToObject(item))
-        );
-
+  
+          const processGallery = _.compact(
+            _.map(_.get(data, "galleries", []), (item) => convertImageToObject(item))
+          );
+  
         const processProducts = _.map(_.get(data, "products", []), (item) => {
           return {
             nameVi: getValue(item, "name", "VI"),
@@ -154,6 +154,7 @@ const CreateService = ({ setLoadingOverlay }) => {
             area: item.area,
             price: item.price,
             show: item.show,
+            order: item.order || 0,
             contentVi: getValue(item, "content", "VI"),
             contentEn: getValue(item, "content", "EN"),
             image1: _.compact([convertImageToObject(_.get(item, "image1"))]),
@@ -162,55 +163,55 @@ const CreateService = ({ setLoadingOverlay }) => {
             id: uuid(),
           };
         });
-
-        setHeadImage(
-          _.compact([convertImageToObject(_.get(data, "servicesHeadImage"))])
-        );
-        setDocks(processDocks);
-        setServices(processServices);
-        setFacilities(processFacilities);
-        setGalleries(processGallery);
-        setProducts(processProducts);
-      } catch (error) {
-        const getMessage = _.get(error, "response.data.message", error.message);
-        message.error(getMessage);
+  
+          setHeadImage(
+            _.compact([convertImageToObject(_.get(data, "servicesHeadImage"))])
+          );
+          setDocks(processDocks);
+          setServices(processServices);
+          setFacilities(processFacilities);
+          setGalleries(processGallery);
+          setProducts(processProducts);
+        } catch (error) {
+          const getMessage = _.get(error, "response.data.message", error.message);
+          message.error(getMessage);
         setLoadingOverlay(false);
-      } finally {
-        setLoadingOverlay(false);
-        setLoading(false);
+        } finally {
+          setLoadingOverlay(false);
+          setLoading(false);
+        }
       }
-    }
-    if (id) {
-      getService();
-    }
-  }, [id]);
-
-  useEffect(() => {
-    if (!id) {
-      setGalleries([]);
-      setDocks([]);
-      setHeadImage([]);
-      form.setFieldsValue("contentVi", "");
-      form.setFieldsValue("contentEn", "");
-    }
-  }, [type]);
-
-  const handleSubmit = () => {
-    form
-      .validateFields()
-      .then(async (values) => {
-        const { slug, nameVi, nameEn, type2TitleVi, type2TitleEn, type3TitleVi, type3TitleEn } = values;
-
-        if (!_.get(image, "length", 0)) {
-          return message.error("Main image is missing");
-        }
-        if (!_.get(backgroundImage, "length", 0)) {
-          return message.error("Background image is missing");
-        }
-
-        try {
+      if (id) {
+        getService();
+      }
+    }, [id]);
+  
+    useEffect(() => {
+      if (!id) {
+        setGalleries([]);
+        setDocks([]);
+        setHeadImage([]);
+        form.setFieldsValue("contentVi", "");
+        form.setFieldsValue("contentEn", "");
+      }
+    }, [type]);
+  
+    const handleSubmit = () => {
+      form
+        .validateFields()
+        .then(async (values) => {
+          const { slug, nameVi, nameEn, type2TitleVi, type2TitleEn, type3TitleVi, type3TitleEn } = values;
+  
+          if (!_.get(image, "length", 0)) {
+            return message.error("Main image is missing");
+          }
+          if (!_.get(backgroundImage, "length", 0)) {
+            return message.error("Background image is missing");
+          }
+  
+          try {
           // const processServices = processCollection(services);
-          const processServices = _.map(services, (item) => {
+            const processServices = _.map(services, (item) => {
             if (
               !item.titleVi ||
               !item.titleEn ||
@@ -218,19 +219,19 @@ const CreateService = ({ setLoadingOverlay }) => {
               !item.contentEn
             ) {
               return message.error("Some service missing content");
-            }
+                }
 
-            return {
-              title: mixContent(item.titleVi, item.titleEn),
-              content: mixContent(item.contentVi, item.contentEn),
-              image: getLinkToServer(_.first(item.image)),
+                return {
+                  title: mixContent(item.titleVi, item.titleEn),
+                  content: mixContent(item.contentVi, item.contentEn),
+                  image: getLinkToServer(_.first(item.image)),
               id: uuid(),
-            };
-          });
-
-          const processFacilities = processCollection(facilities);
-
-          const processProducts = _.map(products, (item) => {
+                };
+            });
+  
+            const processFacilities = processCollection(facilities);
+  
+            const processProducts = _.map(products, (item) => {
             if (
               !item.nameVi ||
               !item.nameEn ||
@@ -238,120 +239,121 @@ const CreateService = ({ setLoadingOverlay }) => {
               !item.contentEn
             ) {
               return message.error("Some product missing content");
-            }
+              }
 
-            return {
-              name: mixContent(item.nameVi, item.nameEn),
-              length: item.length,
-              year: item.year,
-              cabin: item.cabin,
-              area: item.area,
-              price: item.price,
-              show: item.show,
-              content: mixContent(item.contentVi, item.contentEn),
-              image1: getLinkToServer(_.first(item.image1)),
-              image2: getLinkToServer(_.first(item.image2)),
-              image3: getLinkToServer(_.first(item.image3)),
+              return {
+                name: mixContent(item.nameVi, item.nameEn),
+                length: item.length,
+                year: item.year,
+                cabin: item.cabin,
+                area: item.area,
+                price: item.price,
+                show: item.show,
+                order: item.order,
+                content: mixContent(item.contentVi, item.contentEn),
+                image1: getLinkToServer(_.first(item.image1)),
+                image2: getLinkToServer(_.first(item.image2)),
+                image3: getLinkToServer(_.first(item.image3)),
               id: uuid(),
+              };
+            });
+  
+            const postData = {
+              services: processServices,
+              facilities: processFacilities,
+              products: processProducts,
+              type: type,
+              name: mixContent(nameVi, nameEn),
+              slug,
+              image: getLinkToServer(_.first(image)),
+              servicesBackground: getLinkToServer(_.first(backgroundImage)),
+              seo: {
+                title: mixContent(values.seoTitleVi, values.seoTitleEn),
+                description: mixContent(
+                  values.seoDescriptionVi,
+                  values.seoDescriptionEn
+                ),
+                keyword: mixContent(values.seoKeywordVi, values.seoKeywordEn),
+              },
             };
-          });
-
-          const postData = {
-            services: processServices,
-            facilities: processFacilities,
-            products: processProducts,
-            type: type,
-            name: mixContent(nameVi, nameEn),
-            slug,
-            image: getLinkToServer(_.first(image)),
-            servicesBackground: getLinkToServer(_.first(backgroundImage)),
-            seo: {
-              title: mixContent(values.seoTitleVi, values.seoTitleEn),
-              description: mixContent(
-                values.seoDescriptionVi,
-                values.seoDescriptionEn
-              ),
-              keyword: mixContent(values.seoKeywordVi, values.seoKeywordEn),
-            },
-          };
-
-          if (type !== 2) {
-            const processGallery = _.map(galleries, (link) =>
-              getLinkToServer(link)
-            );
-            const processContent = mixContent(contentVi, contentEn);
-            postData["galleries"] = processGallery;
-            postData["content"] = processContent;
-          }
-
-          if (type === 2) {
+  
+            if (type !== 2) {
+              const processGallery = _.map(galleries, (link) =>
+                getLinkToServer(link)
+              );
+              const processContent = mixContent(contentVi, contentEn);
+              postData["galleries"] = processGallery;
+              postData["content"] = processContent;
+            }
+  
+            if (type === 2) {
             const processTitle    = mixContent(type2TitleVi, type2TitleEn);
             const processContent  = mixContent(type2ContentVi, type2ContentEn);
-
+  
             postData["title"]   = processTitle;
-            postData["content"] = processContent;
-
-            const processDocks = processCollection(docks);
-            const servicesHeadImage = getLinkToServer(_.first(headImage));
-
-            postData["docks"] = processDocks;
-            postData["servicesHeadImage"] = servicesHeadImage;
-          }
-
-          if (type === 3) {
-            const processContent = mixContent(type3ContentVi, type3ContentEn);
-            const processContent2 = mixContent(type3Content2Vi, type3Content2En);
-            const processTitle = mixContent(type3TitleVi, type3TitleEn);
-
-            postData["content"] = processContent;
-            postData["content2"] = processContent2;
-            postData["title"] = processTitle;
-          }
-
-          setLoading(true);
-
-          if (id) {
+              postData["content"] = processContent;
+  
+              const processDocks = processCollection(docks);
+              const servicesHeadImage = getLinkToServer(_.first(headImage));
+  
+              postData["docks"] = processDocks;
+              postData["servicesHeadImage"] = servicesHeadImage;
+            }
+  
+            if (type === 3) {
+              const processContent = mixContent(type3ContentVi, type3ContentEn);
+              const processContent2 = mixContent(type3Content2Vi, type3Content2En);
+              const processTitle = mixContent(type3TitleVi, type3TitleEn);
+  
+              postData["content"] = processContent;
+              postData["content2"] = processContent2;
+              postData["title"] = processTitle;
+            }
+  
+            setLoading(true);
+  
+            if (id) {
             const response = await agent.put(`${api.services}/${id}`, {
               ...postData,
             });
             if (_.get(response, "data.success")) {
               message.success("Update service successfully");
             }
-          } else {
+            } else {
             const response = await agent.post(api.services, {
               ...postData,
             });
             if (_.get(response, "data.success")) {
               message.success("Create service successfully");
             }
-          }
-          navigate("/manage/services");
-        } catch (error) {
-          const getMessage = _.get(
-            error,
-            "response.data.message",
-            error.message
-          );
+            }
+            navigate("/manage/services");
+          } catch (error) {
+            const getMessage = _.get(
+              error,
+              "response.data.message",
+              error.message
+            );
 
-          message.error(getMessage);
-        }
-      })
-      .catch((err) => {})
-      .finally(() => setLoading(false));
-  };
+            message.error(getMessage);
+          }
+        })
+        .catch((err) => {})
+        .finally(() => setLoading(false));
+    };
 
   const handleKeyUpName = useCallback(
     _.debounce(() => {
-      const name = form.getFieldValue("nameEn");
-      const slug = stringToSlug(name);
+        const name = form.getFieldValue("nameEn");
+        const slug = stringToSlug(name);
       form.setFieldsValue({
         slug,
       });
     }, 200),
     []
   );
-
-  const handleRemove = (collection, id) => {
+    
+      const handleRemove = (collection, id) => {
     let getCollection = [];
     let setFunc = null;
     switch (collection) {
@@ -374,9 +376,9 @@ const CreateService = ({ setLoadingOverlay }) => {
     }
     const newCollection = _.filter(getCollection, (item) => item.id !== id);
     setFunc(newCollection);
-  };
-
-  const onChangeServiceContent = (id, label, value) => {
+      };
+    
+      const onChangeServiceContent = (id, label, value) => {
     const newServices = _.map(services, (item) => {
       if (item.id === id) {
           item[label] = value;
@@ -384,9 +386,9 @@ const CreateService = ({ setLoadingOverlay }) => {
       return item;
     });
     setServices(newServices);
-  };
-
-  const handleAddService = () => {
+      };
+    
+      const handleAddService = () => {
     services.push({
       titleVi: "",
       titleEn: "",
@@ -396,9 +398,9 @@ const CreateService = ({ setLoadingOverlay }) => {
       id: uuid(),
     });
     setServices([...services]);
-  };
-
-  const onChangeService = (id, label, value) => {
+      };
+    
+      const onChangeService = (id, label, value) => {
     const newServices = _.map(services, (item) => {
       if (item.id === id) {
         item[label] = value;
@@ -406,9 +408,9 @@ const CreateService = ({ setLoadingOverlay }) => {
       return item;
     });
     setServices(newServices);
-  };
-
-  const renderServices = useMemo(() => {
+      };
+    
+      const renderServices = useMemo(() => {
     return services.map((item) => (
       <>
         <Col span="12">
@@ -486,9 +488,9 @@ const CreateService = ({ setLoadingOverlay }) => {
         </Col>
       </>
     ));
-  }, [services]);
-
-  const handleAddFacility = () => {
+      }, [services]);
+    
+      const handleAddFacility = () => {
     facilities.push({
       titleVi: "",
       titleEn: "",
@@ -496,9 +498,9 @@ const CreateService = ({ setLoadingOverlay }) => {
       id: uuid(),
     });
     setFacilities([...facilities]);
-  };
-
-  const onChangeFacility = (id, label, value) => {
+      };
+    
+      const onChangeFacility = (id, label, value) => {
     const newFacilities = _.map(facilities, (item) => {
       if (item.id === id) {
         item[label] = value;
@@ -506,9 +508,9 @@ const CreateService = ({ setLoadingOverlay }) => {
       return item;
     });
     setFacilities(newFacilities);
-  };
-
-  const renderFacilities = useMemo(() => {
+      };
+    
+      const renderFacilities = useMemo(() => {
     return facilities.map((item) => (
       <Row gutter={[16, 0]} key={item.id}>
         <Col span="12">
@@ -555,9 +557,9 @@ const CreateService = ({ setLoadingOverlay }) => {
         </Col>
       </Row>
     ));
-  }, [facilities]);
-
-  const handleAddDock = () => {
+      }, [facilities]);
+    
+      const handleAddDock = () => {
     docks.push({
       titleVi: "",
       titleEn: "",
@@ -565,9 +567,9 @@ const CreateService = ({ setLoadingOverlay }) => {
       id: uuid(),
     });
     setDocks([...docks]);
-  };
-
-  const onChangeDock = (id, label, value) => {
+      };
+    
+      const onChangeDock = (id, label, value) => {
     const newDocks = _.map(docks, (item) => {
       if (item.id === id) {
         item[label] = value;
@@ -575,9 +577,9 @@ const CreateService = ({ setLoadingOverlay }) => {
       return item;
     });
     setDocks(newDocks);
-  };
-
-  const renderDocks = useMemo(() => {
+      };
+    
+      const renderDocks = useMemo(() => {
     return docks.map((item) => (
       <Row gutter={[16, 0]} key={item.id}>
         <Col span="12">
@@ -615,9 +617,9 @@ const CreateService = ({ setLoadingOverlay }) => {
         </Col>
       </Row>
     ));
-  }, [docks]);
-
-  const onChangeProductContent = (id, label, value) => {
+      }, [docks]);
+    
+      const onChangeProductContent = (id, label, value) => {
     const newProducts = _.map(products, (item) => {
       if (item.id === id) {
           item[label] = value;
@@ -625,12 +627,12 @@ const CreateService = ({ setLoadingOverlay }) => {
       return item;
     });
     setProducts(newProducts);
-  };
-
-  const handleAddProduct = () => {
-    const newProduct = [
-      ...products,
-      {
+      };
+    
+      const handleAddProduct = () => {
+        const newProduct = [
+          ...products,
+          {
         nameVi: "",
         nameEn: "",
         length: "",
@@ -639,29 +641,30 @@ const CreateService = ({ setLoadingOverlay }) => {
         area: "",
         price: "",
         show: "",
+        order: 0,
         image1: [],
         image2: [],
         image3: [],
         id: uuid(),
-      },
-    ];
-    setProducts(newProduct);
-  };
-
-  const onChangeProduct = (id, label, value) => {
+          },
+        ];
+        setProducts(newProduct);
+      };
+    
+      const onChangeProduct = (id, label, value) => {
     console.log('label', label);
-    const newProducts = _.map(products, (item) => {
-      if (item.id === id) {
+        const newProducts = _.map(products, (item) => {
+          if (item.id === id) {
           if(label === 'show') {
             console.log('show', value);
           }
 
-          item[label] = value;
-      }
-      return item;
-    });
-    setProducts(newProducts);
-  };
+            item[label] = value;
+          }
+          return item;
+        });
+        setProducts(newProducts);
+      };
 
   const renderProducts = useMemo(() => {
     return products.map((item) => (
@@ -759,22 +762,35 @@ const CreateService = ({ setLoadingOverlay }) => {
           </Form.Item>
         </Col>
         <Col span="6">
-          <Form.Item label="Type display (enter: 1, 2 or 3)">
-            <InputNumber
-              defaultValue={1}
-              min={1}
-              max={3}
-              step={1}
-              value={_.get(item, "show")}
-              onChange={(value) => {
-                console.log('click', value);
-                onChangeProduct(item.id, "show", value);
-              }
-              }
-            />
-          </Form.Item>
+            <Row gutter={[0, 16]}>
+                <Col span="24">
+                    <Form.Item label="Type display (enter: 1, 2 or 3)">
+                        <InputNumber
+                          defaultValue={1}
+                          min={1}
+                          max={3}
+                          step={1}
+                          value={_.get(item, "show")}
+                          onChange={(value) => {
+                            console.log('click', value);
+                            onChangeProduct(item.id, "show", value);
+                          }}
+                          style={{ width: '100%' }}
+                        />
+                    </Form.Item>
+                </Col>
+                <Col span="24">
+                    <Form.Item label="Order">
+                        <InputNumber
+                          value={_.get(item, "order")}
+                          onChange={(value) => onChangeProduct(item.id, "order", value)}
+                          style={{ width: '100%' }}
+                        />
+                    </Form.Item>
+                </Col>
+            </Row>
         </Col>
-
+        
         <Col span="8">
           <Form.Item label="Length">
             <Input
@@ -840,7 +856,7 @@ const CreateService = ({ setLoadingOverlay }) => {
       </>
     ));
   }, [products]);
-
+  
   return loading ? (
     <div className="d-flex align-items-center justify-content-center w-100 h-100">
       <Spin />
