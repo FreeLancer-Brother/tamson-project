@@ -36,6 +36,7 @@ export class CreateServicesDto {
     readonly image1: string;
     readonly image2: string;
     readonly image3: string;
+    readonly order?: number;
   }[];
   readonly type: number;
 }
@@ -76,6 +77,7 @@ export class UpdateServicesDto {
     readonly image1: string;
     readonly image2: string;
     readonly image3: string;
+    readonly order?: number;
   }[];
   readonly type?: number;
 }
