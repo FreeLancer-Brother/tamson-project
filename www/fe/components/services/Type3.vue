@@ -11,8 +11,8 @@
     </div>
     <div class="description text-center mt-5" v-html="serviceData.content[currentLocale]"></div>
 
-    <div class="products-wrapper mt-4" v-if="serviceData.products && serviceData.products.length > 0">
-      <div class="product mt-2 mb-5" v-for="(product, index) in serviceData.products" :key="index">
+    <div class="products-wrapper mt-4" v-if="sortedProducts && sortedProducts.length > 0">
+      <div class="product mt-2 mb-5" v-for="(product, index) in sortedProducts" :key="index">
         <a-row class="inner d-flex flex-wrap">
           <a-col :xs="{ span: 24 }" :lg="{ span: 12 }" class="content item d-flex align-items-center">
             <div class="caption">
@@ -54,23 +54,23 @@
                   <div class="d-flex flex-column">
                     <img class="w-100 border-image-1 product-image-1" :src="`${baseUrl}/${product.image1}`" alt=""
                       v-scroll-reveal="{
-                                  duration: 3000,
-                                  distance: '100%',
-                                  origin: 'right',
-                                  opacity: 0,
-                                  delay: 0,
-                                  reset: false,
-                      }"
+                                        duration: 3000,
+                                        distance: '100%',
+                                        origin: 'right',
+                                        opacity: 0,
+                                        delay: 0,
+                                        reset: false,
+                                }"
                     />
                     <img class="w-100 border-image-2 product-image-2" :src="`${baseUrl}/${product.image2}`" alt=""
                       v-scroll-reveal="{
-                                  duration: 3000,
-                                  distance: '100%',
-                                  origin: 'right',
-                                  opacity: 0,
-                                  delay: 0,
-                                  reset: false,
-                      }"
+                                        duration: 3000,
+                                        distance: '100%',
+                                        origin: 'right',
+                                        opacity: 0,
+                                        delay: 0,
+                                        reset: false,
+                                }"
                     />
                   </div>
                 </a-col>
@@ -78,13 +78,13 @@
                   <div>
                     <img class="w-100 border-image-3 product-image-3" :src="`${baseUrl}/${product.image3}`" alt=""
                       v-scroll-reveal="{
-                                  duration: 3000,
-                                  distance: '100%',
-                                  origin: 'right',
-                                  opacity: 0,
-                                  delay: 0,
-                                  reset: false,
-                      }"
+                                        duration: 3000,
+                                        distance: '100%',
+                                        origin: 'right',
+                                        opacity: 0,
+                                        delay: 0,
+                                        reset: false,
+                                }"
                     />
                   </div>
                 </a-col>
@@ -124,6 +124,13 @@ export default {
   components: {},
 
   computed: {
+    sortedProducts() {
+      if (!this.serviceData || !this.serviceData.products) {
+        return [];
+      }
+      return [...this.serviceData.products].sort((a, b) => (a.order || 0) - (b.order || 0));
+    },
+
     currentLocale() {
       return (this.$i18n.locale || "").toLowerCase();
     },
