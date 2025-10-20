@@ -76,14 +76,7 @@ export default {
 
 <style lang="scss" scoped>
 
-.trans-home-brands-background {
-  height: 500px;
-}
-
 @media screen and (max-width: 992px) {
-  .trans-home-brands-background {
-    height: 250px;
-  }
   .trans-home-brands-logo {
     font-size: 14px !important;
     line-height: 20px !important;
