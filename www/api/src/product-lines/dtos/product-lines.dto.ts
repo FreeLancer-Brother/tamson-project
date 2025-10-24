@@ -1,4 +1,4 @@
-import { MultiLanguageDto } from "src/utils/objects.constant";
+import { MultiLanguageDto, SEOSchema } from "src/utils/objects.constant";
 
 export class CreateProductLinesDto {
   readonly image: string;
@@ -6,6 +6,7 @@ export class CreateProductLinesDto {
   readonly content: MultiLanguageDto[];
   readonly yatchType: string;
   readonly order?: number;
+  readonly seo?: SEOSchema
 }
 
 export class UpdateProductLinesDto {
@@ -14,6 +15,7 @@ export class UpdateProductLinesDto {
   readonly content?: MultiLanguageDto[];
   readonly yatchType?: string;
   readonly order?: number;
+  readonly seo?: SEOSchema
 }
 
 export class FilterProductLinesDto {
