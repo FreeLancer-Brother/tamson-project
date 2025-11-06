@@ -349,6 +349,38 @@ export class AppService {
                           content: `Product line ${key + 1}`,
                         },
                       ],
+                      seo: {
+                        title: [
+                          {
+                            language: "VI",
+                            content: `Dòng sản phẩm ${key + 1} tiêu đề`,
+                          },
+                          {
+                            language: "EN",
+                            content: `Product line ${key + 1} title`,
+                          },
+                        ],
+                        description: [
+                          {
+                            language: "VI",
+                            content: `Dòng sản phẩm ${key + 1} mô tả`,
+                          },
+                          {
+                            language: "EN",
+                            content: `Product line ${key + 1} description`,
+                          },
+                        ],
+                        keyword: [
+                          {
+                            language: "VI",
+                            content: `Dòng sản phẩm ${key + 1} từ khóa`,
+                          },
+                          {
+                            language: "EN",
+                            content: `Product line ${key + 1} keywords`,
+                          },
+                        ],
+                      },
                       image: `images/defaults/yatch-types/image${key + 1}.png`,
                       yatchType: yatchTypeCreated._id.toString(),
                     }));
@@ -558,6 +590,13 @@ export class AppService {
                           bannerImage: `images/defaults/products/background-header.png`,
                           productLine: productLineCreated._id.toString(),
                           brochureLink: "https://google.com",
+                          galleries: [
+                            "images/defaults/home/rentind-service/background.webp",
+                            "images/defaults/home/introduce/slide-bg.webp",
+                            "images/defaults/home/welcome/image1.webp",
+                            "images/defaults/home/welcome/image2.webp",
+                            "images/defaults/home/our-quality/image3.webp"
+                          ],
                         }));
 
                         for (let l = 0; l < products.length; l++) {
