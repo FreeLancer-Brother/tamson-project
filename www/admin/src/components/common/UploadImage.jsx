@@ -1,5 +1,5 @@
 import { Upload, message, Modal } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined, HolderOutlined } from "@ant-design/icons";
 import { useState, useEffect, useRef } from "react";
 import ImgCrop from "antd-img-crop";
 import styled from "styled-components";
@@ -41,6 +41,7 @@ const UploadImage = ({
   maxImage = 45,
   fileListData,
   onChange,
+  sortable = false,
 }) => {
   const StyledUpload = styled(Upload)`
     .ant-upload-select-picture-card {
@@ -58,6 +59,7 @@ const UploadImage = ({
   const [fileList, setFileList] = useState([]);
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const uploadingRef = useRef(new Set());
+  const dragIndexRef = useRef(null);
 
   useEffect(() => {
     if (fileListData?.length) {
@@ -146,6 +148,23 @@ const UploadImage = ({
     }
   };
 
+  const handleReorder = (fromIndex, toIndex) => {
+    if (fromIndex === null || toIndex === null || fromIndex === toIndex) return;
+    setFileList((prev) => {
+      const next = [...prev];
+      const [moved] = next.splice(fromIndex, 1);
+      next.splice(toIndex, 0, moved);
+      return next;
+    });
+    setUploadedFiles((prev) => {
+      const next = [...prev];
+      const [moved] = next.splice(fromIndex, 1);
+      next.splice(toIndex, 0, moved);
+      onChange && onChange(next);
+      return next;
+    });
+  };
+
   const handleRequestMultiple = async (file) => {
     try {
       const data = await fileUpload(file.originFileObj, () => {
@@ -223,6 +242,49 @@ const UploadImage = ({
             maxCount={maxImage}
             multiple={true}
             accept="image/png,image/jpeg"
+            itemRender={(originNode, file, currList) => {
+              if (!sortable) return originNode;
+              const index = currList.findIndex((f) => f.uid === file.uid);
+              return (
+                <div
+                  draggable
+                  onDragStart={(e) => {
+                    dragIndexRef.current = index;
+                    try {
+                      e.dataTransfer.setData('text/plain', String(index));
+                      e.dataTransfer.effectAllowed = 'move';
+                    } catch (err) {}
+                  }}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                  }}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    const from = dragIndexRef.current;
+                    handleReorder(from, index);
+                    dragIndexRef.current = null;
+                  }}
+                  style={{ position: 'relative', cursor: 'move' }}
+                >
+                  {originNode}
+                  <span
+                    title="Drag to reorder"
+                    style={{
+                      position: 'absolute',
+                      top: 4,
+                      left: 4,
+                      zIndex: 2,
+                      background: 'rgba(255,255,255,0.9)',
+                      borderRadius: 4,
+                      padding: '2px 4px',
+                      boxShadow: '0 1px 2px rgba(0,0,0,0.15)'
+                    }}
+                  >
+                    <HolderOutlined />
+                  </span>
+                </div>
+              );
+            }}
           >
             {fileList.length < maxImage ? uploadButton : null}
           </StyledUpload>
