@@ -264,7 +264,7 @@ const UploadImage = ({
                     handleReorder(from, index);
                     dragIndexRef.current = null;
                   }}
-                  style={{ position: 'relative', cursor: 'move' }}
+                  style={{ position: 'relative', cursor: 'move', width: '100%', height: '100%', display: 'inline-block' }}
                 >
                   {originNode}
                   <span
