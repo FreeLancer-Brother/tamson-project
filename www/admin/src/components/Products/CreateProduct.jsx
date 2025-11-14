@@ -716,6 +716,7 @@ const CreateProduct = ({ setLoadingOverlay }) => {
               <UploadImage
                 fileListData={galleries}
                 onChange={setGalleries}
+                sortable={true}
                 width="200px"
                 height="200px"
               />
