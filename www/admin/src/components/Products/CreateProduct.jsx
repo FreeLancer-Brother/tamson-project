@@ -35,6 +35,7 @@ const CreateProduct = ({ setLoadingOverlay }) => {
   const [interiorDesignVi, setInteriorDesignVi] = useState("");
   const [interiorDesignEn, setInteriorDesignEn] = useState("");
   const [galleries, setGalleries] = useState([]);
+  const [draggingSpecId, setDraggingSpecId] = useState(null);
 
   const handleAddSpecifications = () => {
     const newSpe = [
@@ -348,59 +349,198 @@ const CreateProduct = ({ setLoadingOverlay }) => {
     setFunc(newCollection);
   };
 
+  const handleSpecificationDragStart = useCallback((event, id) => {
+    setDraggingSpecId(id);
+    if (event?.dataTransfer) {
+      event.dataTransfer.effectAllowed = "move";
+    }
+  }, []);
+
+  const handleSpecificationDragOver = useCallback(
+    (event) => {
+      event.preventDefault();
+      if (event?.dataTransfer) {
+        event.dataTransfer.dropEffect = "move";
+      }
+    },
+    []
+  );
+
+  const handleSpecificationDrop = useCallback(
+    (event, targetId) => {
+      event.preventDefault();
+      if (!draggingSpecId || draggingSpecId === targetId) {
+        setDraggingSpecId(null);
+        return;
+      }
+
+      const targetRect = event.currentTarget?.getBoundingClientRect();
+      const dropBelow =
+        targetRect && typeof event.clientY === "number"
+          ? event.clientY - targetRect.top > targetRect.height / 2
+          : false;
+
+      setSpecifications((prev) => {
+        const list = [...prev];
+        const fromIndex = list.findIndex(
+          (spec) => spec.id === draggingSpecId
+        );
+        let targetIndex = list.findIndex((spec) => spec.id === targetId);
+
+        if (fromIndex === -1 || targetIndex === -1) {
+          return prev;
+        }
+
+        const [movedItem] = list.splice(fromIndex, 1);
+
+        if (fromIndex < targetIndex) {
+          targetIndex -= 1;
+        }
+
+        if (dropBelow) {
+          targetIndex += 1;
+        }
+
+        if (targetIndex < 0) {
+          targetIndex = 0;
+        }
+
+        if (targetIndex > list.length) {
+          targetIndex = list.length;
+        }
+
+        list.splice(targetIndex, 0, movedItem);
+        return list;
+      });
+
+      setDraggingSpecId(null);
+    },
+    [draggingSpecId]
+  );
+
+  const handleSpecificationDropToEnd = useCallback(
+    (event) => {
+      event.preventDefault();
+      if (!draggingSpecId) {
+        return;
+      }
+
+      setSpecifications((prev) => {
+        const list = [...prev];
+        const fromIndex = list.findIndex(
+          (spec) => spec.id === draggingSpecId
+        );
+
+        if (fromIndex === -1) {
+          return prev;
+        }
+
+        const [movedItem] = list.splice(fromIndex, 1);
+        list.push(movedItem);
+        return list;
+      });
+
+      setDraggingSpecId(null);
+    },
+    [draggingSpecId]
+  );
+
+  const handleSpecificationDragEnd = useCallback(() => {
+    setDraggingSpecId(null);
+  }, []);
+
   const renderSpecification = useMemo(() => {
-    return specifications.map((item) => (
-      <>
-        <Col span="5">
-          <Form.Item label="Label (VI)" required>
-            <Input
-              value={_.get(item, "labelVi")}
-              onChange={(e) =>
-                onChangeSpecification(item.id, "labelVi", e.target.value)
-              }
-            />
-          </Form.Item>
-        </Col>
-        <Col span="5">
-          <Form.Item label="Detail (VI)" required>
-            <Input
-              value={_.get(item, "valueVi")}
-              onChange={(e) =>
-                onChangeSpecification(item.id, "valueVi", e.target.value)
-              }
-            />
-          </Form.Item>
-        </Col>
-        <Col span="5">
-          <Form.Item label="Label (EN)" required>
-            <Input
-              value={_.get(item, "labelEn")}
-              onChange={(e) =>
-                onChangeSpecification(item.id, "labelEn", e.target.value)
-              }
-            />
-          </Form.Item>
-        </Col>
-        <Col span="5">
-          <Form.Item label="Detail (EN)" required>
-            <Input
-              value={_.get(item, "valueEn")}
-              onChange={(e) =>
-                onChangeSpecification(item.id, "valueEn", e.target.value)
-              }
-            />
-          </Form.Item>
-        </Col>
-        <Col span="4">
-          <Form.Item label="&nbsp;">
-            <Button onClick={() => handleRemove("spec", item.id)} type="dashed">
-              Remove
-            </Button>
-          </Form.Item>
-        </Col>
-      </>
+    const specItems = specifications.map((item) => (
+      <Col
+        key={item.id}
+        span="24"
+        draggable
+        onDragStart={(event) =>
+          handleSpecificationDragStart(event, item.id)
+        }
+        onDragOver={handleSpecificationDragOver}
+        onDrop={(event) => handleSpecificationDrop(event, item.id)}
+        onDragEnd={handleSpecificationDragEnd}
+        style={{
+          cursor: "move",
+        }}
+      >
+        <Row gutter={16}>
+          <Col span="5">
+            <Form.Item label="Label (VI)" required>
+              <Input
+                value={_.get(item, "labelVi")}
+                onChange={(e) =>
+                  onChangeSpecification(item.id, "labelVi", e.target.value)
+                }
+              />
+            </Form.Item>
+          </Col>
+          <Col span="5">
+            <Form.Item label="Detail (VI)" required>
+              <Input
+                value={_.get(item, "valueVi")}
+                onChange={(e) =>
+                  onChangeSpecification(item.id, "valueVi", e.target.value)
+                }
+              />
+            </Form.Item>
+          </Col>
+          <Col span="5">
+            <Form.Item label="Label (EN)" required>
+              <Input
+                value={_.get(item, "labelEn")}
+                onChange={(e) =>
+                  onChangeSpecification(item.id, "labelEn", e.target.value)
+                }
+              />
+            </Form.Item>
+          </Col>
+          <Col span="5">
+            <Form.Item label="Detail (EN)" required>
+              <Input
+                value={_.get(item, "valueEn")}
+                onChange={(e) =>
+                  onChangeSpecification(item.id, "valueEn", e.target.value)
+                }
+              />
+            </Form.Item>
+          </Col>
+          <Col span="4">
+            <Form.Item label="&nbsp;">
+              <Button
+                onClick={() => handleRemove("spec", item.id)}
+                type="dashed"
+              >
+                Remove
+              </Button>
+            </Form.Item>
+          </Col>
+        </Row>
+      </Col>
     ));
-  }, [specifications]);
+
+    if (specifications.length) {
+      specItems.push(
+        <Col
+          key="specification-dropzone"
+          span="24"
+          onDragOver={handleSpecificationDragOver}
+          onDrop={handleSpecificationDropToEnd}
+          style={{ minHeight: 8 }}
+        />
+      );
+    }
+
+    return specItems;
+  }, [
+    specifications,
+    handleSpecificationDragStart,
+    handleSpecificationDragOver,
+    handleSpecificationDrop,
+    handleSpecificationDragEnd,
+    handleSpecificationDropToEnd,
+  ]);
 
   const renderTabContent = useMemo(() => {
     return tabContents.map((item) => (
