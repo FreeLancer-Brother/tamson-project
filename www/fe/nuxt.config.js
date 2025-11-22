@@ -1,3 +1,40 @@
+const FAVICON_VERSION = "v=1";
+
+const withFaviconVersion = (path) => `${path}?${FAVICON_VERSION}`;
+
+const faviconHref = withFaviconVersion("/favicon.svg");
+
+const faviconLinks = [
+  {
+    hid: "favicon",
+    rel: "icon",
+    type: "image/svg+xml",
+    href: faviconHref,
+  },
+  {
+    hid: "shortcut-icon",
+    rel: "shortcut icon",
+    type: "image/svg+xml",
+    href: faviconHref,
+  },
+  {
+    hid: "apple-touch-icon",
+    rel: "apple-touch-icon",
+    href: faviconHref,
+  },
+  {
+    hid: "mask-icon",
+    rel: "mask-icon",
+    color: "#5bbad5",
+    href: faviconHref,
+  },
+  {
+    hid: "manifest",
+    rel: "manifest",
+    href: withFaviconVersion("/site.webmanifest"),
+  },
+];
+
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
@@ -13,6 +50,7 @@ export default {
       },
       { name: "format-detection", content: "telephone=no" },
     ],
+    link: faviconLinks,
     script: [
       { src: 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.3/gsap.min.js' },
       { src: 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.3/ScrollTrigger.min.js' },
