@@ -34,7 +34,7 @@ import { ConfigsModule } from "./configs/configs.module";
     }),
     CacheModule.register<RedisClientOptions>({
       store: redisStore,
-      url: process.env.IS_DOCKER ? 'redis://localhost:6379' : 'redis://localhost:6379',
+      url: process.env.IS_DOCKER && 'redis://localhost:6379',
       ttl: 0,
       isGlobal: true,
     }),
