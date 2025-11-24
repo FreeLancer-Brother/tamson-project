@@ -35,7 +35,6 @@ export default {
           ],
         } : {}
       ),
-      link: [{ rel: "icon", type: "image/x-icon", href: this.commonConfig.faviconImage ? `${this.baseUrl}/${this.commonConfig.faviconImage}` : "/favicon.ico" }],
     };
   },
 

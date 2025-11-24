@@ -46,13 +46,6 @@ export default {
 */
 
   head() {
-    const links = [
-      { rel: "manifest", href: "/site.webmanifest"},
-      { rel: "mask-icon", href: "/safari-pinned-tab.svg",color:"#5bbad5"},
-      { rel: "icon", type: "image/svg+xml", href: "/favicon.svg?v=1" },
-      { rel: "apple-touch-icon", href: "/apple-touch-icon.png", sizes:"180x180" }
-    ];
-
     const commonConfigSEO = this.commonConfig && this.commonConfig.seo;
 
     return {
@@ -71,7 +64,6 @@ export default {
           },
         ],
       } : {}),
-      link: links,
       script: [{src: 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8398843657531156', defer: true, crossorigin: "anonymous"}]
     };
   },
