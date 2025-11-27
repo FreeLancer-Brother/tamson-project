@@ -3,8 +3,17 @@ const FAVICON_VERSION = "v=2";
 const withFaviconVersion = (path) => `${path}?${FAVICON_VERSION}`;
 
 const faviconHref = withFaviconVersion("/favicon.svg");
+const faviconPng48Href = withFaviconVersion("/favicon.npg");
 
 const faviconLinks = [
+    // PNG 48x48 – ưu tiên cho Google Search
+  {
+    hid: "favicon-png",
+    rel: "icon",
+    type: "image/png",
+    sizes: "48x48",
+    href: faviconPng48Href,
+  },
   {
     hid: "favicon",
     rel: "icon",
@@ -49,6 +58,18 @@ export default {
         content: "width=device-width, initial-scale=1, shrink-to-fit=no",
       },
       { name: "format-detection", content: "telephone=no" },
+
+      // Open Graph (Facebook, Zalo, LinkedIn...)
+      {
+        hid: "og:type",
+        property: "og:type",
+        content: "website",
+      },
+      {
+        hid: "og:site_name",
+        property: "og:site_name",
+        content: "Tam Sơn Yachting",
+      }
     ],
     link: faviconLinks,
     script: [
