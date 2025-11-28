@@ -79,6 +79,7 @@ services:
       - REACT_APP_TOKEN_NAME=trans-token
       - REACT_APP_BACKEND_ENDPOINT=https://api.tamsonyachting.com
       - PORT=8688
+      - BROWSER=none
     #build: admin/.
     working_dir: /node
 
