@@ -1,9 +1,10 @@
-const FAVICON_VERSION = "v=2";
+const FAVICON_VERSION = "v=3";
 
 const withFaviconVersion = (path) => `${path}?${FAVICON_VERSION}`;
 
 const faviconHref = withFaviconVersion("/favicon.svg");
-const faviconPng48Href = withFaviconVersion("/favicon.npg");
+const faviconPng48Href = withFaviconVersion("/favicon.png");
+const faviconIcoHref = "/favicon.ico";
 
 const faviconLinks = [
     // PNG 48x48 – ưu tiên cho Google Search
@@ -15,6 +16,12 @@ const faviconLinks = [
     href: faviconPng48Href,
   },
   {
+    hid: "favicon-ico",
+    rel: "icon",
+    type: "image/x-icon",
+    href: faviconIcoHref,
+  },
+  {
     hid: "favicon",
     rel: "icon",
     type: "image/svg+xml",
@@ -23,8 +30,8 @@ const faviconLinks = [
   {
     hid: "shortcut-icon",
     rel: "shortcut icon",
-    type: "image/svg+xml",
-    href: faviconHref,
+    type: "image/x-icon",
+    href: faviconIcoHref,
   },
   {
     hid: "apple-touch-icon",
