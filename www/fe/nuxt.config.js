@@ -1,3 +1,56 @@
+const FAVICON_VERSION = "v=3";
+
+const withFaviconVersion = (path) => `${path}?${FAVICON_VERSION}`;
+
+const faviconHref = withFaviconVersion("/favicon.svg");
+const faviconPng48Href = withFaviconVersion("/favicon.png");
+const faviconIcoHref = "/favicon.ico";
+
+const faviconLinks = [
+    // PNG 48x48 – ưu tiên cho Google Search
+  {
+    hid: "favicon-png",
+    rel: "icon",
+    type: "image/png",
+    sizes: "48x48",
+    href: faviconPng48Href,
+  },
+  {
+    hid: "favicon-ico",
+    rel: "icon",
+    type: "image/x-icon",
+    href: faviconIcoHref,
+  },
+  {
+    hid: "favicon",
+    rel: "icon",
+    type: "image/svg+xml",
+    href: faviconHref,
+  },
+  {
+    hid: "shortcut-icon",
+    rel: "shortcut icon",
+    type: "image/x-icon",
+    href: faviconIcoHref,
+  },
+  {
+    hid: "apple-touch-icon",
+    rel: "apple-touch-icon",
+    href: faviconHref,
+  },
+  {
+    hid: "mask-icon",
+    rel: "mask-icon",
+    color: "#5bbad5",
+    href: faviconHref,
+  },
+  {
+    hid: "manifest",
+    rel: "manifest",
+    href: withFaviconVersion("/site.webmanifest"),
+  },
+];
+
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
@@ -12,7 +65,20 @@ export default {
         content: "width=device-width, initial-scale=1, shrink-to-fit=no",
       },
       { name: "format-detection", content: "telephone=no" },
+
+      // Open Graph (Facebook, Zalo, LinkedIn...)
+      {
+        hid: "og:type",
+        property: "og:type",
+        content: "website",
+      },
+      {
+        hid: "og:site_name",
+        property: "og:site_name",
+        content: "Tam Sơn Yachting",
+      }
     ],
+    link: faviconLinks,
     script: [
       { src: 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.3/gsap.min.js' },
       { src: 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.3/ScrollTrigger.min.js' },
@@ -177,19 +243,19 @@ export default {
   build: {
     loaders: {
       less: {
-		  javascriptEnabled: true
-		},
-	  vue: {
-         prettify: false
+        javascriptEnabled: true
+      },
+      vue: {
+        prettify: false
       }
     },
-	  filenames: {
-		app: ({ isDev, isModern }) => isDev ? `[name]${isModern ? '.modern' : ''}.js` : `[contenthash:7]${isModern ? '.modern' : ''}.js`,
-		chunk: ({ isDev, isModern }) => isDev ? `[name]${isModern ? '.modern' : ''}.js` : `[contenthash:7]${isModern ? '.modern' : ''}.js`,
-		css: ({ isDev }) => isDev ? '[name].css' : 'css/[contenthash:7].css',
-		img: ({ isDev }) => isDev ? '[path][name].[ext]' : 'img/[name].[contenthash:7].[ext]',
-		font: ({ isDev }) => isDev ? '[path][name].[ext]' : 'fonts/[name].[contenthash:7].[ext]',
-		video: ({ isDev }) => isDev ? '[path][name].[ext]' : 'videos/[name].[contenthash:7].[ext]'
+    filenames: {
+      app: ({ isDev, isModern }) => isDev ? `[name]${isModern ? '.modern' : ''}.js` : `[contenthash:7]${isModern ? '.modern' : ''}.js`,
+      chunk: ({ isDev, isModern }) => isDev ? `[name]${isModern ? '.modern' : ''}.js` : `[contenthash:7]${isModern ? '.modern' : ''}.js`,
+      css: ({ isDev }) => isDev ? '[name].css' : 'css/[contenthash:7].css',
+      img: ({ isDev }) => isDev ? '[path][name].[ext]' : 'img/[name].[contenthash:7].[ext]',
+      font: ({ isDev }) => isDev ? '[path][name].[ext]' : 'fonts/[name].[contenthash:7].[ext]',
+      video: ({ isDev }) => isDev ? '[path][name].[ext]' : 'videos/[name].[contenthash:7].[ext]'
     },
     extractCSS: true,
   },
